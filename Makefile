@@ -17,7 +17,7 @@ lint:
 ## test: запустить все тесты
 .PHONY: test
 test:
-	./run_tests.sh
+	go test ./...
 
 ## test/cover: запустить тесты и показать покрытие
 .PHONY: test/cover

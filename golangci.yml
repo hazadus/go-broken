@@ -1,0 +1,16 @@
+linters:
+  enable:
+    - gosec
+    - godot
+    - misspell
+    - stylecheck
+
+run:
+  go: "1.23"
+  checks: ["all", "ST1*"]
+
+issues:
+  exclude-use-default: false
+
+output:
+  formats: colored-line-number

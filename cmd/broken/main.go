@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"os"
 	"strings"
 	"time"
 
@@ -13,6 +14,7 @@ type Link struct {
 	Text    string // текст ссылки
 	URL     string // внешняя ссылка
 	PageURL string // URL страницы сайта, где находится внешняя ссылка
+	Error   string // Текст ошибки
 }
 
 var externalLinks = []*Link{}
@@ -56,18 +58,25 @@ func main() {
 	// Неуспешные добавить в массив broken
 	var brokenLinks = []*Link{}
 	for i, l := range externalLinks {
-		fmt.Printf("\n%d. %q - %s\n", i+1, l.Text, l.URL)
+		fmt.Printf("%d. %q - %s\n", i+1, l.Text, l.URL)
 
-		if !checkStatusAndRedirects(l.URL) {
-			fmt.Printf("    Ошибка при обращении к URL\n    @ %q\n", l.PageURL)
+		ok, err := checkStatusAndRedirects(l.URL)
+		if !ok {
+			if err != nil {
+				fmt.Printf("    Ошибка: %s\n    @ %q\n", err.Error(), l.PageURL)
+				l.Error = err.Error()
+			} else {
+				fmt.Printf("    Ошибка соединения с URL\n    @ %q\n", l.PageURL)
+			}
+
 			brokenLinks = append(brokenLinks, l)
 		}
 	}
 
-	fmt.Println("БИТЫЕ ССЫЛКИ")
-	for i, l := range brokenLinks {
-		fmt.Printf("%d. %q - %s - %q\n", i+1, l.PageURL, l.Text, l.URL)
-		// TODO: формировать Markdown-файл с отчётом в файл (скриптом GHA потом его переименуем)
+	err := createMarkdownReport(brokenLinks, "./report.md")
+	if err != nil {
+		fmt.Printf("Ошибка при сохранении отчета: %s\n", err)
+		os.Exit(1)
 	}
 }
 
@@ -86,7 +95,7 @@ func addExternalLink(link *Link) {
 	externalLinks = append(externalLinks, link)
 }
 
-func checkStatusAndRedirects(url string) bool {
+func checkStatusAndRedirects(url string) (bool, error) {
 	var redirectCount int
 	nextURL := url
 	maxRedirectsAllowed := 100
@@ -103,17 +112,31 @@ func checkStatusAndRedirects(url string) bool {
 
 		response, err := httpClient.Get(nextURL)
 		if err != nil {
-			// TODO: возвращать описание ошибки
-			fmt.Println(err)
-			return false
+			return false, err
 		}
 		if response.StatusCode == 200 {
-			return true
+			return true, nil
 		} else {
 			nextURL = response.Header.Get("Location")
 			redirectCount += 1
 		}
 	}
 
-	return false
+	return false, nil
+}
+
+func createMarkdownReport(brokenLinks []*Link, outputFilePath string) error {
+	report := fmt.Sprintf("# ⛓️‍💥 Битые ссылки\n\nВсего: %d\n", len(brokenLinks))
+
+	for i, l := range brokenLinks {
+		report += fmt.Sprintf("\n## %d. На странице %s\n\n⌨️ Текст ссылки: %q\n⛓️‍💥 Внешний URL: %s\n⚠️ Ошибка: %s\n",
+			i+1,
+			l.PageURL,
+			l.Text,
+			l.URL,
+			l.Error,
+		)
+	}
+
+	return os.WriteFile(outputFilePath, []byte(report), 0644)
 }
