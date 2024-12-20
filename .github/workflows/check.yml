@@ -1,0 +1,39 @@
+name: Check Broken Links
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 3 * * 1" # At 03:00 UTC on Monday: https://crontab.guru/#0_3_*_*_1
+
+permissions:
+  contents: write
+
+jobs:
+  check-links:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.23
+      - name: Build app
+        run: |
+          go mod download
+          make build
+      - name: Check links
+        run: |
+          today=$(date +"%Y-%m-%d") && \
+          mkdir -p ./reports && \
+          ./bin/broken && \
+          mv ./report.md "./reports/report.$today.md"
+      - name: Commit and push
+        run: |-
+          git config user.name "Automated"
+          git config user.email "actions@users.noreply.github.com"
+          git add -A
+          timestamp=$(date -u)
+          git commit -m "Отчёт от ${timestamp}" || exit 0
+          git pull --rebase
+          git push
