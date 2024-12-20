@@ -129,7 +129,7 @@ func createMarkdownReport(brokenLinks []*Link, outputFilePath string) error {
 	report := fmt.Sprintf("# ⛓️‍💥 Битые ссылки\n\nВсего: %d\n", len(brokenLinks))
 
 	for i, l := range brokenLinks {
-		report += fmt.Sprintf("\n## %d. На странице %s\n\n⌨️ Текст ссылки: %q\n⛓️‍💥 Внешний URL: %s\n⚠️ Ошибка: %s\n",
+		report += fmt.Sprintf("\n## %d. На странице %s\n\n- ⌨️ Текст ссылки: %q\n- ⛓️‍💥 Внешний URL: %s\n- ⚠️ Ошибка: %s\n",
 			i+1,
 			l.PageURL,
 			l.Text,

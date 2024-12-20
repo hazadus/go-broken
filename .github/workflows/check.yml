@@ -22,12 +22,12 @@ jobs:
         run: |
           go mod download
           make build
-      - name: Check links
+      - name: "Check Links: hazadus.ru"
         run: |
           today=$(date +"%Y-%m-%d") && \
           mkdir -p ./reports && \
           ./bin/broken && \
-          mv ./report.md "./reports/report.$today.md"
+          mv ./report.md "./reports/hazadus.ru.$today.md"
       - name: Commit and push
         run: |-
           git config user.name "Automated"
