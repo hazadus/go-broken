@@ -6,25 +6,25 @@
 
 - ⌨️ Текст ссылки: "RSS Reader"
 - ⛓️‍💥 Внешний URL: http://rss.hazadus.ru
-- ⚠️ Ошибка: Get "https://rss.hazadus.ru/": tls: failed to verify certificate: x509: certificate has expired or is not yet valid: current time 2024-12-20T10:11:31Z is after 2024-12-16T05:52:53Z
+- ⚠️ Ошибка: Get "https://rss.hazadus.ru/": tls: failed to verify certificate: x509: certificate has expired or is not yet valid: current time 2024-12-20T11:47:43Z is after 2024-12-16T05:52:53Z
 
 ## 2. На странице https://hazadus.ru/blogroll/
 
 - ⌨️ Текст ссылки: "Library"
 - ⛓️‍💥 Внешний URL: http://library.hazadus.ru
-- ⚠️ Ошибка: Get "https://library.hazadus.ru/": tls: failed to verify certificate: x509: certificate has expired or is not yet valid: current time 2024-12-20T10:11:34Z is after 2024-12-16T05:48:46Z
+- ⚠️ Ошибка: Get "https://library.hazadus.ru/": tls: failed to verify certificate: x509: certificate has expired or is not yet valid: current time 2024-12-20T11:47:46Z is after 2024-12-16T05:48:46Z
 
 ## 3. На странице https://hazadus.ru/about/bookshelf/
 
 - ⌨️ Текст ссылки: " бэклог веду"
 - ⛓️‍💥 Внешний URL: http://library.hazadus.ru/lists/5/details/
-- ⚠️ Ошибка: Get "https://library.hazadus.ru/lists/5/details/": tls: failed to verify certificate: x509: certificate has expired or is not yet valid: current time 2024-12-20T10:11:40Z is after 2024-12-16T05:48:46Z
+- ⚠️ Ошибка: Get "https://library.hazadus.ru/lists/5/details/": tls: failed to verify certificate: x509: certificate has expired or is not yet valid: current time 2024-12-20T11:47:55Z is after 2024-12-16T05:48:46Z
 
 ## 4. На странице https://hazadus.ru/blog/new-project-rss-reader
 
 - ⌨️ Текст ссылки: "познакомиться с приложением"
 - ⛓️‍💥 Внешний URL: https://rss.hazadus.ru/
-- ⚠️ Ошибка: Get "https://rss.hazadus.ru/": tls: failed to verify certificate: x509: certificate has expired or is not yet valid: current time 2024-12-20T10:11:43Z is after 2024-12-16T05:52:53Z
+- ⚠️ Ошибка: Get "https://rss.hazadus.ru/": tls: failed to verify certificate: x509: certificate has expired or is not yet valid: current time 2024-12-20T11:48:00Z is after 2024-12-16T05:52:53Z
 
 ## 5. На странице https://hazadus.ru/blog/sentry-filter-handled-exceptions
 
@@ -72,7 +72,7 @@
 
 - ⌨️ Текст ссылки: "Внутри CPython"
 - ⛓️‍💥 Внешний URL: http://library.hazadus.ru/books/46/details/
-- ⚠️ Ошибка: Get "https://library.hazadus.ru/books/46/details/": tls: failed to verify certificate: x509: certificate has expired or is not yet valid: current time 2024-12-20T10:11:56Z is after 2024-12-16T05:48:46Z
+- ⚠️ Ошибка: Get "https://library.hazadus.ru/books/46/details/": tls: failed to verify certificate: x509: certificate has expired or is not yet valid: current time 2024-12-20T11:48:14Z is after 2024-12-16T05:48:46Z
 
 ## 13. На странице https://hazadus.ru/blog/redis-nuxt-view-counter
 
