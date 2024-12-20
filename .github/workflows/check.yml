@@ -28,6 +28,12 @@ jobs:
           mkdir -p ./reports && \
           ./bin/broken && \
           mv ./report.md "./reports/hazadus.ru.$today.md"
+      - name: "Check Links: speakers24.ru"
+        run: |
+          today=$(date +"%Y-%m-%d") && \
+          mkdir -p ./reports && \
+          ./bin/broken -s "https://speakers24.ru" -d "speakers24.ru" -i "https://speakers24.ru,https://www.speakers24.ru,https://спикеры24.ру" && \
+          mv ./report.md "./reports/speakers24.ru.$today.md"
       - name: Commit and push
         run: |-
           git config user.name "Automated"
