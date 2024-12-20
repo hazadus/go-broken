@@ -34,6 +34,18 @@ jobs:
           mkdir -p ./reports && \
           ./bin/broken -s "https://speakers24.ru" -d "speakers24.ru" -i "https://speakers24.ru,https://www.speakers24.ru,https://спикеры24.ру" && \
           mv ./report.md "./reports/speakers24.ru.$today.md"
+      - name: "Check Links: anvlink.ru"
+        run: |
+          today=$(date +"%Y-%m-%d") && \
+          mkdir -p ./reports && \
+          ./bin/broken -s "https://anvlink.ru" -d "anvlink.ru" -i "https://anvlink.ru,https://anvl.ink" && \
+          mv ./report.md "./reports/anvlink.ru.$today.md"
+      - name: "Check Links: nameapp.anverali.tech"
+        run: |
+          today=$(date +"%Y-%m-%d") && \
+          mkdir -p ./reports && \
+          ./bin/broken -s "https://nameapp.anverali.tech" -d "nameapp.anverali.tech" -i "https://nameapp.anverali.tech" && \
+          mv ./report.md "./reports/nameapp.$today.md"
       - name: Commit and push
         run: |-
           git config user.name "Automated"
