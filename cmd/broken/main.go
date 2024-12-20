@@ -17,43 +17,27 @@ type Link struct {
 	Error   string // Текст ошибки
 }
 
-var externalLinks = []*Link{}
-
 func main() {
-	// Instantiate default collector
-	c := colly.NewCollector(
-		// Visit only domains:
-		colly.AllowedDomains("hazadus.ru"),
-	)
+	externalLinks, err := collectExternalLinks()
+	if err != nil {
+		fmt.Printf("Ошибка при сборе внешних ссылок: %s\n", err)
+		os.Exit(1)
+	}
 
-	// On every a element which has href attribute call callback
-	c.OnHTML("a[href]", func(e *colly.HTMLElement) {
-		link := e.Attr("href")
+	brokenLinks, err := checkLinks(externalLinks)
+	if err != nil {
+		fmt.Printf("Ошибка при проверке внешних ссылок: %s\n", err)
+		os.Exit(1)
+	}
 
-		// Ссылки, которые начинаются не с https://hazadus.ru, https://amgold.ru, mailto:,
-		// добавлять в массив
-		if isExternalLink(link) {
-			fmt.Printf("    Найдена внешняя ссылка: %q -> %s\n", e.Text, link)
-			addExternalLink(&Link{
-				Text:    e.Text,
-				URL:     link,
-				PageURL: e.Request.URL.String(),
-			})
-		}
+	err = createMarkdownReport(brokenLinks, "./report.md")
+	if err != nil {
+		fmt.Printf("Ошибка при сохранении отчета: %s\n", err)
+		os.Exit(1)
+	}
+}
 
-		// Visit link found on page
-		// Only those links are visited which are in AllowedDomains
-		c.Visit(e.Request.AbsoluteURL(link))
-	})
-
-	// Before making a request print "Visiting ..."
-	c.OnRequest(func(r *colly.Request) {
-		fmt.Println("Visiting", r.URL.String())
-	})
-
-	// Start scraping
-	c.Visit("https://hazadus.ru/")
-
+func checkLinks(externalLinks []*Link) ([]*Link, error) {
 	// Внешние ссылки в массиве обойти, для каждой зафиксировать успех/неуспех
 	// Неуспешные добавить в массив broken
 	var brokenLinks = []*Link{}
@@ -73,11 +57,49 @@ func main() {
 		}
 	}
 
-	err := createMarkdownReport(brokenLinks, "./report.md")
-	if err != nil {
-		fmt.Printf("Ошибка при сохранении отчета: %s\n", err)
-		os.Exit(1)
-	}
+	return brokenLinks, nil
+}
+
+func collectExternalLinks() ([]*Link, error) {
+	var externalLinks = []*Link{}
+
+	// Instantiate default collector
+	c := colly.NewCollector(
+		// Visit only domains:
+		colly.AllowedDomains("hazadus.ru"),
+	)
+
+	// On every a element which has href attribute call callback
+	c.OnHTML("a[href]", func(e *colly.HTMLElement) {
+		link := e.Attr("href")
+
+		// Ссылки, которые начинаются не с https://hazadus.ru, https://amgold.ru, mailto:,
+		// добавлять в массив
+		if isExternalLink(link) {
+			fmt.Printf("    Найдена внешняя ссылка: %q -> %s\n", e.Text, link)
+			if !isIncluded(externalLinks, link) {
+				externalLinks = append(externalLinks, &Link{
+					Text:    e.Text,
+					URL:     link,
+					PageURL: e.Request.URL.String(),
+				})
+			}
+		}
+
+		// Visit link found on page
+		// Only those links are visited which are in AllowedDomains
+		c.Visit(e.Request.AbsoluteURL(link))
+	})
+
+	// Before making a request print "Visiting ..."
+	c.OnRequest(func(r *colly.Request) {
+		fmt.Println("Visiting", r.URL.String())
+	})
+
+	// Start scraping
+	c.Visit("https://hazadus.ru/")
+
+	return externalLinks, nil
 }
 
 func isExternalLink(url string) bool {
@@ -85,14 +107,14 @@ func isExternalLink(url string) bool {
 		(!strings.HasPrefix(url, "https://hazadus.ru") || !strings.HasPrefix(url, "https://amgold.ru") || !strings.HasPrefix(url, "mailto:"))
 }
 
-func addExternalLink(link *Link) {
+func isIncluded(externalLinks []*Link, url string) bool {
 	for _, l := range externalLinks {
-		if l.URL == link.URL {
-			return
+		if l.URL == url {
+			return true
 		}
 	}
 
-	externalLinks = append(externalLinks, link)
+	return false
 }
 
 func checkStatusAndRedirects(url string) (bool, error) {
