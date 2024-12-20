@@ -1,30 +1,30 @@
 # ⛓️‍💥 Битые ссылки
 
-Всего: 20
+Всего: 21
 
 ## 1. На странице https://hazadus.ru/blogroll/
 
 - ⌨️ Текст ссылки: "RSS Reader"
 - ⛓️‍💥 Внешний URL: http://rss.hazadus.ru
-- ⚠️ Ошибка: Get "https://rss.hazadus.ru/": tls: failed to verify certificate: x509: certificate has expired or is not yet valid: current time 2024-12-20T11:47:43Z is after 2024-12-16T05:52:53Z
+- ⚠️ Ошибка: Get "https://rss.hazadus.ru/": tls: failed to verify certificate: x509: certificate has expired or is not yet valid: current time 2024-12-20T16:44:06Z is after 2024-12-16T05:52:53Z
 
 ## 2. На странице https://hazadus.ru/blogroll/
 
 - ⌨️ Текст ссылки: "Library"
 - ⛓️‍💥 Внешний URL: http://library.hazadus.ru
-- ⚠️ Ошибка: Get "https://library.hazadus.ru/": tls: failed to verify certificate: x509: certificate has expired or is not yet valid: current time 2024-12-20T11:47:46Z is after 2024-12-16T05:48:46Z
+- ⚠️ Ошибка: Get "https://library.hazadus.ru/": tls: failed to verify certificate: x509: certificate has expired or is not yet valid: current time 2024-12-20T16:44:09Z is after 2024-12-16T05:48:46Z
 
 ## 3. На странице https://hazadus.ru/about/bookshelf/
 
 - ⌨️ Текст ссылки: " бэклог веду"
 - ⛓️‍💥 Внешний URL: http://library.hazadus.ru/lists/5/details/
-- ⚠️ Ошибка: Get "https://library.hazadus.ru/lists/5/details/": tls: failed to verify certificate: x509: certificate has expired or is not yet valid: current time 2024-12-20T11:47:55Z is after 2024-12-16T05:48:46Z
+- ⚠️ Ошибка: Get "https://library.hazadus.ru/lists/5/details/": tls: failed to verify certificate: x509: certificate has expired or is not yet valid: current time 2024-12-20T16:44:17Z is after 2024-12-16T05:48:46Z
 
 ## 4. На странице https://hazadus.ru/blog/new-project-rss-reader
 
 - ⌨️ Текст ссылки: "познакомиться с приложением"
 - ⛓️‍💥 Внешний URL: https://rss.hazadus.ru/
-- ⚠️ Ошибка: Get "https://rss.hazadus.ru/": tls: failed to verify certificate: x509: certificate has expired or is not yet valid: current time 2024-12-20T11:48:00Z is after 2024-12-16T05:52:53Z
+- ⚠️ Ошибка: Get "https://rss.hazadus.ru/": tls: failed to verify certificate: x509: certificate has expired or is not yet valid: current time 2024-12-20T16:44:22Z is after 2024-12-16T05:52:53Z
 
 ## 5. На странице https://hazadus.ru/blog/sentry-filter-handled-exceptions
 
@@ -72,7 +72,7 @@
 
 - ⌨️ Текст ссылки: "Внутри CPython"
 - ⛓️‍💥 Внешний URL: http://library.hazadus.ru/books/46/details/
-- ⚠️ Ошибка: Get "https://library.hazadus.ru/books/46/details/": tls: failed to verify certificate: x509: certificate has expired or is not yet valid: current time 2024-12-20T11:48:14Z is after 2024-12-16T05:48:46Z
+- ⚠️ Ошибка: Get "https://library.hazadus.ru/books/46/details/": tls: failed to verify certificate: x509: certificate has expired or is not yet valid: current time 2024-12-20T16:44:36Z is after 2024-12-16T05:48:46Z
 
 ## 13. На странице https://hazadus.ru/blog/redis-nuxt-view-counter
 
@@ -116,7 +116,13 @@
 - ⛓️‍💥 Внешний URL: https://www.hazadus.ru
 - ⚠️ Ошибка: Get "https://www.hazadus.ru": tls: failed to verify certificate: x509: certificate is valid for amgold.ru, not www.hazadus.ru
 
-## 20. На странице https://hazadus.ru/about/
+## 20. На странице https://hazadus.ru/blog/free-ssl-certbot
+
+- ⌨️ Текст ссылки: "Using Free Let’s Encrypt SSL/TLS Certificates with NGINX"
+- ⛓️‍💥 Внешний URL: https://www.nginx.com/blog/using-free-ssltls-certificates-from-lets-encrypt-with-nginx/
+- ⚠️ Ошибка: Get "https://www.nginx.com/blog/using-free-ssltls-certificates-from-lets-encrypt-with-nginx/": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+
+## 21. На странице https://hazadus.ru/about/
 
 - ⌨️ Текст ссылки: "винил"
 - ⛓️‍💥 Внешний URL: https://www.discogs.com/user/hazadus/collection?header=1
