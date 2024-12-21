@@ -3,20 +3,9 @@ package main
 import (
 	"flag"
 	"fmt"
-	"net/http"
 	"os"
 	"strings"
-	"time"
-
-	"github.com/gocolly/colly"
 )
-
-type Link struct {
-	Text    string // текст ссылки
-	URL     string // внешняя ссылка
-	PageURL string // URL страницы сайта, где находится внешняя ссылка
-	Error   string // Текст ошибки
-}
 
 func main() {
 	siteURLFlag := flag.String("s", "https://hazadus.ru", "страница, с которой начинаем собирать ссылки")
@@ -26,9 +15,14 @@ func main() {
 
 	internalURLs := strings.Split(*internalURLsFlag, ",")
 
+	run(*siteURLFlag, *allowedDomainFlag, internalURLs)
+}
+
+// run выполняет основную логику приложения.
+func run(siteURL, allowedDomain string, internalURLs []string) {
 	externalLinks, err := collectExternalLinks(
-		*siteURLFlag,
-		*allowedDomainFlag,
+		siteURL,
+		allowedDomain,
 		internalURLs,
 	)
 	if err != nil {
@@ -47,143 +41,4 @@ func main() {
 		fmt.Printf("Ошибка при сохранении отчета: %s\n", err)
 		os.Exit(1)
 	}
-}
-
-// collectExternalLinks собирает все "внешние" ссылки с указанного сайта.
-//   - siteUrl - страница, с которой начинаем собирать ссылки
-//   - allowedDomain - домен, с которого разрешается собирать ссылки
-//   - internalURLs - список URL, которые считаются "внутренними"
-func collectExternalLinks(siteUrl, allowedDomain string, internalURLs []string) ([]*Link, error) {
-	var externalLinks = []*Link{}
-
-	// Instantiate default collector
-	c := colly.NewCollector(
-		// Visit only domains:
-		colly.AllowedDomains(allowedDomain),
-	)
-
-	// On every a element which has href attribute call callback
-	c.OnHTML("a[href]", func(e *colly.HTMLElement) {
-		link := e.Attr("href")
-
-		// Ссылки, которые начинаются не с https://hazadus.ru, https://amgold.ru, mailto:,
-		// добавлять в массив
-		if isExternalLink(link, internalURLs) {
-			fmt.Printf("    Найдена внешняя ссылка: %q -> %s\n", e.Text, link)
-			if !isIncluded(externalLinks, link) {
-				externalLinks = append(externalLinks, &Link{
-					Text:    e.Text,
-					URL:     link,
-					PageURL: e.Request.URL.String(),
-				})
-			}
-		}
-
-		// Visit link found on page
-		// Only those links are visited which are in AllowedDomains
-		c.Visit(e.Request.AbsoluteURL(link))
-	})
-
-	// Before making a request print "Visiting ..."
-	c.OnRequest(func(r *colly.Request) {
-		fmt.Println("Visiting", r.URL.String())
-	})
-
-	// Start scraping
-	c.Visit(siteUrl)
-
-	return externalLinks, nil
-}
-
-func checkLinks(externalLinks []*Link) ([]*Link, error) {
-	// Внешние ссылки в массиве обойти, для каждой зафиксировать успех/неуспех
-	// Неуспешные добавить в массив broken
-	var brokenLinks = []*Link{}
-	for i, l := range externalLinks {
-		fmt.Printf("%d. %q - %s\n", i+1, l.Text, l.URL)
-
-		ok, err := checkStatusAndRedirects(l.URL)
-		if !ok {
-			if err != nil {
-				fmt.Printf("    Ошибка: %s\n    @ %q\n", err.Error(), l.PageURL)
-				l.Error = err.Error()
-			} else {
-				fmt.Printf("    Ошибка соединения с URL\n    @ %q\n", l.PageURL)
-			}
-
-			brokenLinks = append(brokenLinks, l)
-		}
-	}
-
-	return brokenLinks, nil
-}
-
-func isExternalLink(url string, interalURLs []string) bool {
-	if !strings.HasPrefix(url, "http") {
-		return false
-	}
-
-	for _, internalURL := range interalURLs {
-		if strings.HasPrefix(url, internalURL) {
-			return false
-		}
-	}
-
-	return true
-}
-
-func isIncluded(externalLinks []*Link, url string) bool {
-	for _, l := range externalLinks {
-		if l.URL == url {
-			return true
-		}
-	}
-
-	return false
-}
-
-func checkStatusAndRedirects(url string) (bool, error) {
-	var redirectCount int
-	nextURL := url
-	maxRedirectsAllowed := 100
-	getRequestTimeout := 3 * time.Second
-
-	// Считаем количество редиректов
-	for redirectCount <= maxRedirectsAllowed {
-		httpClient := http.Client{
-			Timeout: getRequestTimeout,
-			CheckRedirect: func(req *http.Request, via []*http.Request) error {
-				return http.ErrUseLastResponse
-			},
-		}
-
-		response, err := httpClient.Get(nextURL)
-		if err != nil {
-			return false, err
-		}
-		if response.StatusCode == 200 {
-			return true, nil
-		} else {
-			nextURL = response.Header.Get("Location")
-			redirectCount += 1
-		}
-	}
-
-	return false, nil
-}
-
-func createMarkdownReport(brokenLinks []*Link, outputFilePath string) error {
-	report := fmt.Sprintf("# ⛓️‍💥 Битые ссылки\n\nВсего: %d\n", len(brokenLinks))
-
-	for i, l := range brokenLinks {
-		report += fmt.Sprintf("\n## %d. На странице %s\n\n- ⌨️ Текст ссылки: %q\n- ⛓️‍💥 Внешний URL: %s\n- ⚠️ Ошибка: %s\n",
-			i+1,
-			l.PageURL,
-			l.Text,
-			l.URL,
-			l.Error,
-		)
-	}
-
-	return os.WriteFile(outputFilePath, []byte(report), 0644)
 }
