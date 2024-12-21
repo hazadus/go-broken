@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 	"net/http"
 	"strings"
@@ -21,11 +20,11 @@ type Link struct {
 //   - siteUrl - страница, с которой начинаем собирать ссылки
 //   - allowedDomain - домен, с которого разрешается собирать ссылки
 //   - internalURLs - список URL, которые считаются "внутренними"
-func collectExternalLinks(siteUrl, allowedDomain string, internalURLs []string) ([]*Link, error) {
+func collectExternalLinks(siteURL, allowedDomain string, internalURLs []string) ([]*Link, error) {
 	var externalLinks = []*Link{}
 
 	c := colly.NewCollector(
-		// Visit only domains:
+		// Посещать только разрешенные домены:
 		colly.AllowedDomains(allowedDomain),
 	)
 
@@ -45,7 +44,10 @@ func collectExternalLinks(siteUrl, allowedDomain string, internalURLs []string) 
 			}
 		}
 
-		// Visit link found on page. Only those links are visited which are in AllowedDomains
+		// Посещаются только ссылки, соответствующие AllowedDomains
+		// NB: Ошибка вызова ниже не проверяется, т.к. он выдаёт множество бесполезных ошибок
+		// вида "URL already visited".
+		//nolint:all
 		c.Visit(e.Request.AbsoluteURL(link))
 	})
 
@@ -54,7 +56,10 @@ func collectExternalLinks(siteUrl, allowedDomain string, internalURLs []string) 
 	})
 
 	// Начать сбор ссылок
-	c.Visit(siteUrl)
+	err := c.Visit(siteURL)
+	if err != nil {
+		return nil, fmt.Errorf("⚠️ collectExternalLinks: %w", err)
+	}
 
 	return externalLinks, nil
 }
@@ -133,7 +138,7 @@ func checkStatusAndRedirects(url string) (bool, error) {
 		if response.StatusCode == 200 {
 			return true, nil
 		} else if response.StatusCode >= 400 {
-			return false, errors.New(fmt.Sprintf("GET %q → status code = %d", nextURL, response.StatusCode))
+			return false, fmt.Errorf("GET %q → status code = %d", nextURL, response.StatusCode)
 		} else {
 			url, err := response.Location()
 			if err != nil {

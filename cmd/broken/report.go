@@ -20,5 +20,5 @@ func createMarkdownReport(brokenLinks []*Link, outputFilePath string) error {
 		)
 	}
 
-	return os.WriteFile(outputFilePath, []byte(report), 0444)
+	return os.WriteFile(outputFilePath, []byte(report), 0600)
 }
